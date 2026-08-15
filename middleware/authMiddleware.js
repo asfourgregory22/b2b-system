@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const User = require("../models/userModel");
 
-exports.protect = async (res,res,next) => {
+exports.protect = async (req,res,next) => {
     try{
         let token;
 
@@ -28,6 +28,13 @@ exports.protect = async (res,res,next) => {
             });
         }
 
+        if (!currentUser.isActive) {
+            return res.status(401).json({
+                status : "fail",
+                message : "This account has been deactivated."
+            });
+        }
+
         req.user = currentUser;
         next();
 
@@ -37,4 +44,16 @@ exports.protect = async (res,res,next) => {
             message : "Invalid or expired token. Please log in again."
         });
     }
+};
+
+exports.restrictTo = (...roles) => {
+    return (req, res, next) => {
+        if (!roles.includes(req.user.role)) {
+            return res.status(403).json({
+                status : "fail",
+                message : "You do not have permisiion to perform this action."
+            });
+        }
+        next();
+    };
 };

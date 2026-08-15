@@ -49,26 +49,18 @@ const userSchema = new mongoose.Schema({
 {timestamps : true}
 )
 
-userSchema.pre("save", async function(next){
-    try{
-        if(!this.isModified("password")){
-            return next();
-        }
-
-        if(this.password !== this.passwordConfirm){
-            return next(new Error("Passwords do not match"))
-        }
-
-        this.password = await bcrypt.hash(this.password , 12);
-        this.passwordConfirm = undefined;
-
-        next();
-
-    }catch(err){
-        console.log(err);
-        next(err);
+userSchema.pre("save", async function(){
+    if(!this.isModified("password")){
+        return;
     }
-})
+
+    if(this.password !== this.passwordConfirm){
+        throw new Error("Passwords do not match");
+    }
+
+    this.password = await bcrypt.hash(this.password , 12);
+    this.passwordConfirm = undefined;
+});
 
 userSchema.methods.checkPassword = async function(candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword);
