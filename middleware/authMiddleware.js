@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const User = require("../models/userModel");
+const Customer = require("../models/customerModel");
 
 exports.protect = async (req,res,next) => {
     try{
@@ -41,6 +42,50 @@ exports.protect = async (req,res,next) => {
     }catch(err){
         return res.status(401).json({
             status : "fail",
+            message : "Invalid or expired token. Please log in again."
+        });
+    }
+};
+
+exports.protectCustomer = async (req, res, next) => {
+    try{
+        let token;
+
+       if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
+            token = req.headers.authorization.split(" ")[1];
+        }
+
+        if(!token){
+            return res.status(401).json({
+                status : 'fail',
+                message : "You are not logged in. Please log in to get access."
+            });
+        }
+
+        const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+        const currentCustomer = await Customer.findById(decoded.id);
+
+        if(!currentCustomer){
+            return res.status(401).json({
+                status : 'fail',
+                message : "Customer belonging to this token no longer exists."
+            });
+        }
+
+        if(!currentCustomer.isActive){
+            return res.status(401).json({
+                status : 'fail',
+                message : "This account is no longer active."
+            });
+        }
+
+        req.customer = currentCustomer;
+        next();
+
+    }catch(err){
+        return res.status(401).json({
+            status : 'fail',
             message : "Invalid or expired token. Please log in again."
         });
     }

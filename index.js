@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const userRoutes = require('./routes/userRoutes');
 const itemRoutes = require('./routes/itemRoutes');
+const customerRoutes = require ("./routes/customerRoutes");
 
 const express = require("express");
 const DB = require("./database").connectDB;
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/items', itemRoutes);
+app.use("/api/customers", customerRoutes);
 
 app.get('/', (req , res) => {
     res.send('API is running'  ); 

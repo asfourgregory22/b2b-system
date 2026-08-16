@@ -11,7 +11,7 @@ const signToken = (id) => {
 
 exports.register = async (req,res) => {
     try{
-        const { name, email, password, passwordConfirm, role } = req.body
+        const { name, email, password, passwordConfirm, role } = req.body;
 
         const newUser = await User.create({ name, email, password, passwordConfirm, role });
         const token = signToken(newUser._id);
@@ -44,7 +44,7 @@ exports.login = async (req,res) => {
             return res.status(404).json({message:"User not found."});
         };
 
-        if(!(await user.checkPassword(password,user.password))){
+        if(!(await user.checkPassword( password, user.password))){
             return res.status(401).json({message:"Incorrect email or password."});
         };
 
