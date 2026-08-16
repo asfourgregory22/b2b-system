@@ -151,3 +151,58 @@ exports.rejectOrder = async (req,res) => {
         });
     }
 };
+
+exports.getMyOrders = async (req,res) => {
+    try{
+        let filter = {};
+
+        if(req.user.role == 'salesman'){
+            filter = { salesmanId : req.user._id };
+        }
+
+        const orders = await Order.find(filter);
+
+        res.status(200).json({
+            status : 'success',
+            results : orders.length,
+            data : { orders }
+        });
+
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        });
+    }
+};
+
+exports.getOrder = async (req,res) => {
+    try{
+        const order = await Order.findById(req.params.id);
+
+        if(!order){
+            return res.status(404).json({
+                status : 'fail',
+                message : 'No order found with that ID.'
+            });
+        }
+
+        if(req.user.role == 'salesman' && String(order.salesmanId) !== String(req.user._id)){
+            return res.status(403).json({
+                status : 'fail',
+                message : 'You do not have permission to view this order'
+            })
+        }
+
+        res.status(200).json({
+            status : 'success',
+            data : { order }
+        });
+
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        });
+    }
+};
