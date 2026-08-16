@@ -234,7 +234,7 @@ exports.submitOwnOrder = async (req,res) => {
                 priceAtOrder : item.price
             });
         }
-        
+
         totalAmount = Math.round(totalAmount * 100) / 100;
 
         const newOrder = await Order.create({
@@ -253,6 +253,47 @@ exports.submitOwnOrder = async (req,res) => {
         res.status(201).json({
             status : 'success',
             data : { order : newOrder, items : orderItems }
+        });
+
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        });
+    }
+};
+
+exports.updatedOrderStatus = async (req,res) =>{
+    try{
+        const { status } = req.body;
+
+        const validTransition = {
+            approved : 'shipped',
+            shipped : 'delivered'
+        };
+
+        const order = await Order.findById(req.params.id);
+
+        if(!order){
+            return res.status(404).json({
+                status : "fail",
+                message : 'No order found with that ID'
+            });
+        }
+
+        if(validTransition[order.status] !== status ){
+            return res.status(400).json({
+                status : 'fail',
+                message : `Cannot transition from ${ order.status } to ${ status }`
+            });
+        }
+
+        order.status = status;
+        await order.save();
+
+        res.status(200).json({
+            status : 'success',
+            data : { order }
         });
 
     }catch(err){

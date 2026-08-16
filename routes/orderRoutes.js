@@ -10,5 +10,6 @@ router.patch('/:id/reject', protect, restrictTo('admin', 'stock_manager'), order
 router.get('/', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getMyOrders);
 router.get('/:id', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getOrder);
 router.post('/mine', protectCustomer, orderController.submitOwnOrder);
+router.patch('/:id/status', protect, restrictTo('admin', 'stock_manager'), orderController.updatedOrderStatus);
 
 module.exports = router;
