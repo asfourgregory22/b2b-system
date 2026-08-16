@@ -58,7 +58,7 @@ exports.submitOrder = async (req,res) => {
     }
 };
 
-exports.approvedOrder = async (req,res) => {
+exports.approveOrder = async (req,res) => {
     try{
         const order = await Order.findById(req.params.id);
       
