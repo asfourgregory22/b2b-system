@@ -46,6 +46,13 @@ exports.loginCustomer = async (req,res) => {
             return res.status(401).json({ message : "Incorrect email or password."});
         };
 
+        if(!customer.isActive){
+            return res.status(401).json({
+                status : 'fail',
+                message : 'This account has been deactivated'
+            })
+        }
+
         const token = signToken(customer._id);
         customer.password = undefined;
 
