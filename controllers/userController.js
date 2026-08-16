@@ -76,3 +76,62 @@ exports.getMe = async (req, res) => {
         }
     });
 };
+
+exports.updateUser = async (req, res) => {
+    try{
+        const { name, role, isActive } = req.body;
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            { name, role, isActive },
+            { new: true, runValidators: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                status : 'fail',
+                message : 'No user found with that ID'
+            });
+        }
+
+        res.status(200).json({
+            status : 'success',
+            data : { user : updatedUser }
+        });
+
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        });
+    }
+};
+
+exports.deactivateUser = async (req, res) => {
+    try{
+
+        const deactivatedUser = await User.findByIdAndUpdate(
+            req.params.id,
+            { isActive : false },
+            { new : true }
+        );
+
+        if(!deactivatedUser) {
+            return res.status(404).json({
+                status : 'fail',
+                message : 'No user found with that ID.'
+            });
+        }
+
+        res.status(200).json({
+            status : 'success',
+            data : { user : deactivatedUser }
+        });
+
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        });
+    }
+};
