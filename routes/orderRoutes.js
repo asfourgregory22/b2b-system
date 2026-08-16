@@ -6,5 +6,6 @@ const { protect, restrictTo } = require("../middleware/authMiddleware");
 
 router.post('/', protect, restrictTo('admin', 'salesman'), orderController.submitOrder);
 router.patch('/:id/approve', protect, restrictTo('admin', 'stock_manager'), orderController.approveOrder);
+router.patch('/:id/reject', protect, restrictTo('admin', 'stock_manager'), orderController.rejectOrder);
 
 module.exports = router;
