@@ -1,4 +1,5 @@
 const Transaction = require('../models/transactionModel');
+const Customer = require("../models/customerModel");
 
 exports.recordPayment = async(req,res) => {
     try{
@@ -16,6 +17,45 @@ exports.recordPayment = async(req,res) => {
             status : 'success',
             data : { transaction : newTransaction }
         });
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        });
+    }
+};
+
+exports.getCustomerStatement = async (req,res) => {
+    try{
+        const customer = await Customer.findById(req.params.customerId);
+
+        if(!customer){
+            return res.status(404).json({
+                status : 'fail',
+                message : "No customer found with that ID"
+            });
+        }
+
+        if( req.user.role === "salesman" && String(customer.salesmanId) !== String(req.user._id)){
+            return res.status(403).json({
+                status : "fail",
+                message : "You do not have permission to view this statement"
+            });
+        }
+
+        const transactions = await Transaction.find({ customerId : req.params.customerId }).sort('createdAt');
+ 
+        const balance = transactions.reduce((total, t) => {
+            return t.type === 'debit' ? total + t.amount : total - t.amount;
+        }, 0);
+
+        res.status(200).json({
+            status : 'success',
+            results : transactions.length,
+            balance,
+            data : { transactions }
+        });
+
     }catch(err){
         res.status(400).json({
             status : 'fail',
