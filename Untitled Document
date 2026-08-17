@@ -1,0 +1,66 @@
+b2b-system/
+  backend/              ← already exists, untouched
+    config/
+    controllers/
+    middleware/
+    models/
+    routes/
+    database.js
+    index.js
+    ...
+
+  frontend/             ← new, we create this now
+    login.html
+    css/
+      style.css
+    js/
+      login.js
+
+
+
+frontend/
+  login.html                    ← sign in (all roles)
+
+  dashboard.html                 ← landing page after login, role-aware
+                                     (shows different nav/options depending on role)
+
+  products.html                  ← spreadsheet-style product grid
+                                     (view stock, used by everyone)
+
+  order-submit.html              ← select items + quantities, submit order
+                                     (customer, salesman, admin)
+
+  orders.html                    ← list of orders
+                                     (scoped per role — own orders for customer,
+                                      assigned for salesman, all for admin/staff)
+
+  order-detail.html              ← single order view, with approve/reject buttons
+                                     (only visible/usable for stock_manager/admin)
+
+  statement.html                 ← transaction history + balance
+                                     (own statement for customer, scoped for salesman)
+
+  items-manage.html              ← create/edit/deactivate items
+                                     (stock_manager/admin only)
+
+  customers-manage.html          ← create/deactivate customers, assign salesman
+                                     (admin only)
+
+  css/
+    style.css                    ← shared styles across all pages
+
+  js/
+    login.js
+    dashboard.js
+    products.js
+    order-submit.js
+    orders.js
+    order-detail.js
+    statement.js
+    items-manage.js
+    customers-manage.js
+
+    api.js                       ← shared helper — a central place for making
+                                     fetch() calls with the token attached,
+                                     so you're not repeating that logic in
+                                     every single page's JS file
