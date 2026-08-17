@@ -5,11 +5,14 @@ const orderController = require("../controllers/orderController");
 const { protect, restrictTo, protectCustomer } = require("../middleware/authMiddleware");
 
 router.post('/', protect, restrictTo('admin', 'salesman'), orderController.submitOrder);
-router.patch('/:id/approve', protect, restrictTo('admin', 'stock_manager'), orderController.approveOrder);
-router.patch('/:id/reject', protect, restrictTo('admin', 'stock_manager'), orderController.rejectOrder);
+router.post('/mine', protectCustomer, orderController.submitOwnOrder);
+
+router.get('/mine', protectCustomer, orderController.getMyOwnOrders);
 router.get('/', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getMyOrders);
 router.get('/:id', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getOrder);
-router.post('/mine', protectCustomer, orderController.submitOwnOrder);
+
+router.patch('/:id/approve', protect, restrictTo('admin', 'stock_manager'), orderController.approveOrder);
+router.patch('/:id/reject', protect, restrictTo('admin', 'stock_manager'), orderController.rejectOrder);
 router.patch('/:id/status', protect, restrictTo('admin', 'stock_manager'), orderController.updatedOrderStatus);
 
 module.exports = router;
