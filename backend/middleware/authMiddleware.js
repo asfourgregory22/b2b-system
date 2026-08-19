@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 const User = require("../models/userModel");
-const Customer = require("../models/customerModel");
+/*const Customer = require("../models/customerModel");*/
 
 exports.protect = async (req,res,next) => {
     try{
@@ -47,7 +47,7 @@ exports.protect = async (req,res,next) => {
     }
 };
 
-exports.protectCustomer = async (req, res, next) => {
+/*exports.protectCustomer = async (req, res, next) => {
     try{
         let token;
 
@@ -89,7 +89,7 @@ exports.protectCustomer = async (req, res, next) => {
             message : "Invalid or expired token. Please log in again."
         });
     }
-};
+};*/
 
 exports.restrictTo = (...roles) => {
     return (req, res, next) => {

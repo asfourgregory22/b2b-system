@@ -5,7 +5,7 @@ const orderSchema = new mongoose.Schema({
 
     customerId:{
         type : mongoose.Schema.Types.ObjectId,
-        ref : 'Customer',
+        ref : 'User',
         required : true
     },
 
@@ -24,7 +24,7 @@ const orderSchema = new mongoose.Schema({
     submittedByModel:{
         type : String,
         required : true,
-        enum : ['User' , 'Customer']
+        enum : ['User']
     },
 
     status:{

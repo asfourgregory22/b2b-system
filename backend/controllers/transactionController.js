@@ -1,5 +1,5 @@
 const Transaction = require('../models/transactionModel');
-const Customer = require("../models/customerModel");
+const User = require("../models/userModel");
 
 exports.recordPayment = async(req,res) => {
     try{
@@ -27,7 +27,7 @@ exports.recordPayment = async(req,res) => {
 
 exports.getCustomerStatement = async (req,res) => {
     try{
-        const customer = await Customer.findById(req.params.customerId);
+        const customer = await User.findById(req.params.customerId);
 
         if(!customer){
             return res.status(404).json({
@@ -66,7 +66,7 @@ exports.getCustomerStatement = async (req,res) => {
 
 exports.getMyStatement = async (req,res) => {
     try{
-        const transactions = await Transaction.find({ customerId : req.customer._id }).sort('createdAt');
+        const transactions = await Transaction.find({ customerId : req.user._id }).sort('createdAt');
 
         const balance = transactions.reduce((total,t) => {
             return t.type === 'debit' ? total + t.amount : total - t.amount

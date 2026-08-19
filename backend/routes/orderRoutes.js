@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 
 const orderController = require("../controllers/orderController");
-const { protect, restrictTo, protectCustomer } = require("../middleware/authMiddleware");
+const { protect, restrictTo } = require("../middleware/authMiddleware");
 
 router.post('/', protect, restrictTo('admin', 'salesman'), orderController.submitOrder);
-router.post('/mine', protectCustomer, orderController.submitOwnOrder);
+router.post('/mine', protect, restrictTo("customer"), orderController.submitOwnOrder);
 
-router.get('/mine', protectCustomer, orderController.getMyOwnOrders);
+router.get('/mine', protect, restrictTo("customer"), orderController.getMyOwnOrders);
 router.get('/', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getMyOrders);
 router.get('/:id', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getOrder);
 

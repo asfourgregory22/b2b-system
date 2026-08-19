@@ -38,7 +38,15 @@ const userSchema = new mongoose.Schema({
     role:{
         type : String,
         required  : [true , "Please assign role"],
-        enum : ["admin" , "stock_manager" , "accountant" , "general_manager" , "salesman"]
+        enum : ["admin" , "stock_manager" , "accountant" , "general_manager" , "salesman", "customer"]
+    },
+
+    salesmanId:{
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "User",
+        required : function(){
+            return this.role === "customer";
+        }
     },
 
     isActive:{

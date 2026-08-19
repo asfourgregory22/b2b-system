@@ -238,9 +238,10 @@ exports.submitOwnOrder = async (req,res) => {
         totalAmount = Math.round(totalAmount * 100) / 100;
 
         const newOrder = await Order.create({
-            customerId : req.customer._id,
-            submittedBy : req.customer._id,
-            submittedByModel : 'Customer',
+            customerId : req.user._id,
+            salesmanId : req.user.salesmanId,
+            submittedBy : req.user._id,
+            submittedByModel : 'User',
             totalAmount
         });
 
@@ -306,7 +307,7 @@ exports.updatedOrderStatus = async (req,res) =>{
 
 exports.getMyOwnOrders = async (req,res) => {
     try{
-        const orders = await Order.find({ customerId : req.customer._id });
+        const orders = await Order.find({ customerId : req.user._id });
 
         res.status(200).json({
             status : 'success',

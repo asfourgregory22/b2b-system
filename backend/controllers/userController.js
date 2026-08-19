@@ -13,6 +13,13 @@ exports.register = async (req,res) => {
     try{
         const { name, email, password, passwordConfirm, role } = req.body;
 
+        if( role === "customer" ){
+            return res.status(400).json({
+                status : "fail",
+                message: 'Use the customer creation endpoint to register customers'
+            });
+        }
+
         const newUser = await User.create({ name, email, password, passwordConfirm, role });
         const token = signToken(newUser._id);
 
@@ -138,6 +145,69 @@ exports.deactivateUser = async (req, res) => {
     }catch(err){
         res.status(400).json({
             status : 'fail',
+            message : err.message
+        });
+    }
+};
+
+exports.createCustomer = async (req,res) => {
+    try{
+        const { name, email, password, passwordConfirm, salesmanId } = req.body;
+
+        const newCustomer = await User.create({
+            name, email, password, passwordConfirm,
+            role : "customer",
+            salesmanId : req.user.role === "salesman" ? req.user._id : salesmanId
+        });
+
+        newCustomer.password = undefined;
+
+        res.status(201).json({
+            status: 'success',
+            data: { user: newCustomer }
+        });
+
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        });
+    }
+};
+
+exports.assignSalesman = async (req,res) =>{
+    try{
+    const { salesmanId } = req.body;
+
+    const salesman = await User.findOne({ _id : salesmanId, role : "salesman", isActive:true});
+    if(!salesman){
+        return res.status(400).json({
+            status : "fail",
+            message : "Invalid or Inactive salesman"
+        })
+    }
+
+    const updatedCustomer = await User.findOneAndUpdate(
+        { _id : req.params.id, role : "customer"},
+        { salesmanId },
+        { new : true , runValidators : true}
+    );
+
+    if(!updatedCustomer){
+        return res.status(400).json({
+            status : "failed",
+            message : "no customer found with that id"
+        });
+    }
+
+    res.status(200).json({
+        status : "success",
+        data : {user : updatedCustomer}
+    });
+
+    }catch(err){
+        res.status(400).json({
+            status : "fail",
             message : err.message
         });
     }
