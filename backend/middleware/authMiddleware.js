@@ -96,7 +96,7 @@ exports.restrictTo = (...roles) => {
         if (!roles.includes(req.user.role)) {
             return res.status(403).json({
                 status : "fail",
-                message : "You do not have permisiion to perform this action."
+                message : "You do not have permision to perform this action."
             });
         }
         next();

@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+//* dead code kept for future use incase of approval/rejection via email
 const approvalRequestSchema = new mongoose.Schema({
 
     orderId:{
