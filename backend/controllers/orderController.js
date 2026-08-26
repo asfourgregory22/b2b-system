@@ -162,7 +162,8 @@ exports.getMyOrders = async (req,res) => {
             filter = { salesmanId : req.user._id };
         }
 
-        const orders = await Order.find(filter);
+        const orders = await Order.find(filter)
+            .populate('customerId','name email');
 
         res.status(200).json({
             status : 'success',
@@ -180,7 +181,8 @@ exports.getMyOrders = async (req,res) => {
 
 exports.getOrder = async (req,res) => {
     try{
-        const order = await Order.findById(req.params.id);
+        const order = await Order.findById(req.params.id)
+            .populate( 'customerId', 'name email' );
 
         if(!order){
             return res.status(404).json({
@@ -307,7 +309,8 @@ exports.updatedOrderStatus = async (req,res) =>{
 
 exports.getMyOwnOrders = async (req,res) => {
     try{
-        const orders = await Order.find({ customerId : req.user._id });
+        const orders = await Order.find({ customerId : req.user._id })
+            .populate( "customerId" , "name email" );
 
         res.status(200).json({
             status : 'success',
