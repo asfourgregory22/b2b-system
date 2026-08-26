@@ -48,11 +48,17 @@ exports.login = async (req,res) => {
         const user = await User.findOne({email}).select('+password');
      
         if(!user){
-            return res.status(404).json({message:"User not found."});
+            return res.status(404).json({
+                status : "fail",
+                message :"User not found."
+            });
         };
 
         if(!(await user.checkPassword( password, user.password))){
-            return res.status(401).json({message:"Incorrect email or password."});
+            return res.status(401).json({
+                status : "fail",
+                message:"Incorrect email or password."
+            });
         };
 
         if (!user.isActive){
