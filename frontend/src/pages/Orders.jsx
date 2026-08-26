@@ -1,4 +1,5 @@
 import { useState , useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/useAuth'
 
 function Orders(){
@@ -51,7 +52,9 @@ function Orders(){
             <ul>
                 {orders.map((order) =>(
                     <li key = {order._id}>
-                         Order #{order._id.slice(-6)} — Customer: {order.customerId.name} — Status: {order.status} — Total: ${order.totalAmount}
+                        <Link to={`/orders/${order._id}`}>
+                             Order #{order._id.slice(-6)} — Customer: {order.customerId.name} — Status: {order.status} — Total: ${order.totalAmount}
+                        </Link>
                     </li>
                 ))}
             </ul>
