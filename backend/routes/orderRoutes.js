@@ -11,8 +11,8 @@ router.get('/mine', protect, restrictTo("customer"), orderController.getMyOwnOrd
 router.get('/', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getMyOrders);
 router.get('/:id', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getOrder);
 
-router.patch('/:id/approve', protect, restrictTo('admin', 'stock_manager'), orderController.approveOrder);
-router.patch('/:id/reject', protect, restrictTo('admin', 'stock_manager'), orderController.rejectOrder);
-router.patch('/:id/status', protect, restrictTo('admin', 'stock_manager'), orderController.updatedOrderStatus);
+router.patch('/:id/approve', protect, restrictTo('admin', 'general_manager'), orderController.approveOrder);
+router.patch('/:id/reject', protect, restrictTo('admin', 'general_manager'), orderController.rejectOrder);
+router.patch('/:id/status', protect, restrictTo('admin', 'general_manager'), orderController.updatedOrderStatus);
 
 module.exports = router;
