@@ -56,12 +56,18 @@ function OrderDetail() {
         setOrder(data.data.order)
     }
 
-        async function handleReject() {
+    async function handleReject() {
+        const reason = prompt('Reason for rejection (optional) :')
+
         const token = localStorage.getItem('token')
         const response = await fetch(`http://localhost:3000/api/orders/${id}/reject`,{
             method : 'PATCH',
-            headers : { Authorization : `Bearer ${token}`}
-        })
+            headers : { 
+                'Content-Type' : 'application/json',
+                Authorization : `Bearer ${token}`},
+
+                body : JSON.stringify({ reason : reason || ''})    
+            })
         const data = await response.json()
 
         if ( data.status !== "success") {
@@ -87,6 +93,10 @@ function OrderDetail() {
             <p>Total: ${order.totalAmount}</p>
             <p>Customer: {order.customerId.name}</p>
             <p>Created: {order.createdAt}</p>
+
+            {order.status === 'rejected' && (
+                <p>Rejection Reason : {order.rejectionReason}</p>
+            )}
 
             {canModerate && (
                 <div>
