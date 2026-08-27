@@ -8,7 +8,6 @@ import Orders from './pages/Orders'
 import OrderDetail from './pages/OrderDetail'
 import NewOrder from './pages/NewOrder'
 import Users from './pages/Users'
-import Transactions from './pages/Transactions'
 
 function App () {
   return (
@@ -23,7 +22,6 @@ function App () {
             <Route   path="/orders/new"   element={ <NewOrder/> } />
             <Route   path="/orders/:id"   element={ <OrderDetail/> } />  
             <Route   path="/users"        element={ <Users/> } />
-            <Route   path="/transactions" element={<Transactions/>} />
           </Route>
         </Route>
 
