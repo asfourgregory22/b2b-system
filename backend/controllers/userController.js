@@ -234,4 +234,27 @@ exports.getAllUsers = async ( req , res ) => {
             message : err.message
         })
     }
-}
+};
+
+exports.getUser = async ( req , res ) => {
+    try{
+        const user = await User.findById(req.params.id);
+
+        if( !user ) {
+            return res.status(404).json({
+                status : 'fail',
+                message : 'No user found with that ID'
+            })
+        }
+
+        res.status(200).json({
+            status : 'success',
+            data : { user }
+        });
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        })
+    }
+};
