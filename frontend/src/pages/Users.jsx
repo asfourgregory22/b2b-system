@@ -43,9 +43,15 @@ function Users() {
                 <li><Link to="/users/new">+ Create User</Link></li>
                 {users.map((user) => (
                     <li key={user._id}>
-                        <Link to={`/users/${user._id}`}>
-                            {user.name} — {user.email} — {user.role} — {user.isActive ? 'Active' : 'Inactive'}
-                        </Link>    
+                        {user.role === 'customer' ? (
+                            <Link to={`/users/${user._id}`}>
+                                {user.name} — {user.email} — {user.role} — {user.isActive ? 'Active' : 'Inactive'}
+                            </Link>
+                        ) : (
+                            <span>
+                                {user.name} — {user.email} — {user.role} — {user.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                        )}
                     </li>
                 ))}
             </ul>
