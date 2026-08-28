@@ -15,6 +15,7 @@ router.get('/:id', protect, restrictTo('admin', 'general_manager', 'accountant',
 
 router.patch('/:id', protect, restrictTo('admin'), userController.updateUser);
 router.patch('/:id/deactivate', protect, restrictTo('admin'), userController.deactivateUser);
+router.patch('/:id/reset-password', protect, restrictTo('admin'), userController.resetPassword);
 
 router.post('/customers', protect, restrictTo('admin', 'salesman'), userController.createCustomer);
 router.patch('/:id/assign-salesman', protect, restrictTo('admin'), userController.assignSalesman);

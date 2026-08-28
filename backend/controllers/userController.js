@@ -127,6 +127,35 @@ exports.updateUser = async (req, res) => {
     }
 };
 
+exports.resetPassword = async (req, res) => {
+    try{
+        const { password , passwordConfirm } = req.body;
+
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            return res.status(404).json({
+                status : 'fail',
+                message : 'No user found with that ID'
+            });
+        }
+
+        user.password = password;
+        user.passwordConfirm = passwordConfirm;
+        await user.save();
+
+        res.status(200).json({
+            status : 'success',
+            message : "Password reset successfully"
+        })
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        });
+    }
+};
+
 exports.deactivateUser = async (req, res) => {
     try{
 

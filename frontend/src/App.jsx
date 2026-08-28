@@ -9,6 +9,7 @@ import OrderDetail from './pages/OrderDetail'
 import NewOrder from './pages/NewOrder'
 import Users from './pages/Users'
 import CustomerDetail from './pages/CustomerDetail'
+import CreateUser from './pages/CreateUser'
 
 function App () {
   return (
@@ -23,7 +24,8 @@ function App () {
             <Route   path="/orders/new"   element={ <NewOrder/> } />
             <Route   path="/orders/:id"   element={ <OrderDetail/> } />  
             <Route   path="/users"        element={ <Users/> } />
-            <Route path="/users/:id"      element={<CustomerDetail />} /> 
+            <Route   path="/users/new"    element={<CreateUser />} />
+            <Route   path="/users/:id"    element={<CustomerDetail />} /> 
           </Route>
         </Route>
 

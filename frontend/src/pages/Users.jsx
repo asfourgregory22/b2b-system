@@ -40,6 +40,7 @@ function Users() {
         <div>
             <h1>Users</h1>
             <ul>
+                <li><Link to="/users/new">+ Create User</Link></li>
                 {users.map((user) => (
                     <li key={user._id}>
                         <Link to={`/users/${user._id}`}>
