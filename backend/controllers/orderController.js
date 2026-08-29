@@ -191,6 +191,13 @@ exports.getOrder = async (req,res) => {
             });
         }
 
+        if(req.user.role == 'customer' && String(order.customerId._id) !== String(req.user._id)){
+            return res.status(403).json({
+                status : 'fail',
+                message : 'You do not have permission to view this order'
+            })
+        }
+
         if(req.user.role == 'salesman' && String(order.salesmanId) !== String(req.user._id)){
             return res.status(403).json({
                 status : 'fail',
