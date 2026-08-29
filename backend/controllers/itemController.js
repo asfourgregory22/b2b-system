@@ -120,3 +120,32 @@ exports.deactivateItem = async (req, res) => {
         });
     }
 };
+
+exports.activateItem = async (req, res) => {
+    try{
+        const activatedItem = await Item.findByIdAndUpdate(
+            req.params.id,
+            { isActive : true },
+            { new : true }
+        );
+
+        if(!activatedItem){
+            return res.status(404).json({
+                status : 'fail',
+                message : "No item found with that ID"
+            });
+        }
+
+        res.status(200).json({
+            status : 'success',
+            data : { item : activatedItem }
+        });
+
+
+    }catch(err){
+        res.status(400).json({
+            status : 'fail',
+            message : err.message
+        });
+    }
+};
