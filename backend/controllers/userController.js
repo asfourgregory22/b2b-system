@@ -192,7 +192,7 @@ exports.createCustomer = async (req,res) => {
         const newCustomer = await User.create({
             name, email, password, passwordConfirm,
             role : "customer",
-            salesmanId : req.user.role === "salesman" ? req.user._id : salesmanId
+            salesmanId : salesmanId
         });
 
         newCustomer.password = undefined;
@@ -248,42 +248,62 @@ exports.assignSalesman = async (req,res) =>{
     }
 };
 
-exports.getAllUsers = async ( req , res ) => {
-    try{
-        const users = await User.find();
+exports.getAllUsers = async (req, res) => {
+    try {
+        let filter = {};
+
+        if (req.user.role === 'salesman') {
+            filter = {
+                role: 'customer',
+                salesmanId: req.user._id,
+            };
+        }
+
+        const users = await User.find(filter);
 
         res.status(200).json({
-            status : 'success',
-            results : users.length,
-            data : { users }
+            status: 'success',
+            results: users.length,
+            data: { users },
         });
-    }catch(err){
+    } catch (err) {
         res.status(400).json({
-            status : 'fail',
-            message : err.message
-        })
+            status: 'fail',
+            message: err.message,
+        });
     }
 };
 
-exports.getUser = async ( req , res ) => {
-    try{
+exports.getUser = async (req, res) => {
+    try {
         const user = await User.findById(req.params.id);
 
-        if( !user ) {
+        if (!user) {
             return res.status(404).json({
-                status : 'fail',
-                message : 'No user found with that ID'
-            })
+                status: 'fail',
+                message: 'No user found with that ID',
+            });
+        }
+
+        if (req.user.role === 'salesman') {
+            const isSelf = String(user._id) === String(req.user._id);
+            const isAssignedCustomer = user.role === 'customer' && String(user.salesmanId) === String(req.user._id);
+            if (!isSelf && !isAssignedCustomer) {
+                return res.status(403).json({
+                    status: 'fail',
+                    message: 'You do not have permission to view this user',
+                });
+            }
         }
 
         res.status(200).json({
-            status : 'success',
-            data : { user }
+            status: 'success',
+            data: { user },
         });
-    }catch(err){
+    } catch (err) {
         res.status(400).json({
-            status : 'fail',
-            message : err.message
-        })
+            status: 'fail',
+            message: err.message,
+        });
     }
 };

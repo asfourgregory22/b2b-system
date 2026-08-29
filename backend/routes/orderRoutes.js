@@ -4,15 +4,22 @@ const router = express.Router();
 const orderController = require("../controllers/orderController");
 const { protect, restrictTo } = require("../middleware/authMiddleware");
 
-router.post('/', protect, restrictTo('admin', 'salesman'), orderController.submitOrder);
-router.post('/mine', protect, restrictTo("customer"), orderController.submitOwnOrder);
+router.use(protect);
 
-router.get('/mine', protect, restrictTo("customer"), orderController.getMyOwnOrders);
-router.get('/', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getMyOrders);
-router.get('/:id', protect, restrictTo('admin', 'stock_manager', 'accountant', 'salesman'), orderController.getOrder);
+router.get('/', restrictTo('admin', 'general_manager', 'accountant', 'stock_manager'), orderController.getAllOrders);
 
-router.patch('/:id/approve', protect, restrictTo('admin', 'general_manager'), orderController.approveOrder);
-router.patch('/:id/reject', protect, restrictTo('admin', 'general_manager'), orderController.rejectOrder);
-router.patch('/:id/status', protect, restrictTo('admin', 'general_manager'), orderController.updatedOrderStatus);
+router.get('/sales', restrictTo('salesman'), orderController.getMyOrders);
+
+router.post('/mine', restrictTo('customer'), orderController.submitOwnOrder);
+router.get('/mine', restrictTo('customer'), orderController.getMyOwnOrders);
+
+router.post('/', restrictTo('admin', 'general_manager', 'salesman'), orderController.submitOrder);
+
+router.get('/:id', restrictTo('admin', 'general_manager', 'stock_manager', 'accountant', 'salesman'), orderController.getOrder);
+
+router.patch('/:id/approve', restrictTo('admin', 'general_manager'), orderController.approveOrder);
+router.patch('/:id/reject', restrictTo('admin', 'general_manager'), orderController.rejectOrder);
+
+router.patch('/:id/status', restrictTo('admin', 'general_manager'), orderController.updateOrderStatus);
 
 module.exports = router;

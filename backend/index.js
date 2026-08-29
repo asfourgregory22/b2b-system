@@ -17,6 +17,10 @@ app.use(cors({
   origin: 'http://localhost:5173'
 }));
 
+app.get('/test', (req, res) => {
+    res.json({ message: 'Test OK' });
+});
+
 app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/items', itemRoutes);

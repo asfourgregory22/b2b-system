@@ -69,7 +69,7 @@ exports.getMyStatement = async (req,res) => {
         const transactions = await Transaction.find({ customerId : req.user._id }).sort('createdAt');
 
         const balance = transactions.reduce((total,t) => {
-            return t.type === 'debit' ? total + t.amount : total - t.amount
+            return t.type === 'credit' ? total + t.amount : total - t.amount
         }, 0);
 
         res.status(200).json({

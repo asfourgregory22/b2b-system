@@ -266,7 +266,7 @@ exports.submitOwnOrder = async (req,res) => {
     }
 };
 
-exports.updatedOrderStatus = async (req,res) =>{
+exports.updateOrderStatus = async (req,res) =>{
     try{
         const { status } = req.body;
 
@@ -322,6 +322,26 @@ exports.getMyOwnOrders = async (req,res) => {
         res.status(400).json({
             status : 'fail',
             message : err.message
+        });
+    }
+};
+
+exports.getAllOrders = async (req, res) => {
+    try {
+        const orders = await Order.find()
+            .populate('customerId', 'name email')
+            .populate('salesmanId', 'name')
+            .sort('-createdAt');
+
+        res.status(200).json({
+            status: 'success',
+            results: orders.length,
+            data: { orders }
+        });
+    } catch (err) {
+        res.status(400).json({
+            status: 'fail',
+            message: err.message
         });
     }
 };
