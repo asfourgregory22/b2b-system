@@ -1,30 +1,78 @@
-import { createContext, useState} from 'react'
+import { createContext, useState, useContext, useEffect } from 'react';
+import api from '../api/axios';
+
+const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [loading, setLoading] = useState(true);
 
 
-export const AuthContext = createContext()
+  useEffect(() => {
+    const checkAuth = async () => {
+      if (token) {
+        try {
+          const response = await api.get('/users/me');
+          
+          setUser(response.data.data.user);
 
-export function AuthProvider({ children }) {
-    
-    const [ user, setUser ] = useState(() => {
-        const stored = localStorage.getItem('user')
-        return stored ? JSON.parse(stored) : null
-    })
+        } catch(err){
+          localStorage.removeItem('token');
+          setToken(null);
+          setUser(null);
+        }
+      }
+      setLoading(false);
+    };
 
-    function login(userData, token) {
-        localStorage.setItem( 'token' , token )
-        localStorage.setItem( 'user' , JSON.stringify(userData))
-        setUser(userData)
+    checkAuth();
+  }, [token]);
+
+
+  const login = async (email, password) => {
+
+    try{
+      const response = await api.post('/users/login', { email, password });
+      const newToken = response.data.token;
+      const userData = response.data.data.user;
+
+      localStorage.setItem('token', newToken);
+      
+      setToken(newToken);
+      setUser(userData);
+
+      return { success: true };
+
+     }catch(err){
+      const message = err.response?.data?.message || 'Login failed';
+      return { success: false,
+               error: message
+             };
     }
+  };
 
-    function logout() {
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        setUser( null )
-    }
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setUser(null);
+  };
 
-    return (
-        <AuthContext.Provider value={{ user, login, logout }}>
-            { children }
-        </AuthContext.Provider>
-    )
-}
+  const value = {
+    user,
+    token,
+    loading,
+    login,
+    logout,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

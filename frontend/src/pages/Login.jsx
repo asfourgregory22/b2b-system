@@ -1,65 +1,58 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/useAuth'
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-function Login() {
-    const [ email , setEmail ] = useState('')
-    const [ password , setPassword ] = useState('')
-    const [ error , setError ] = useState('')
-    const navigate = useNavigate()
-    const { login } = useAuth()
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-    async function handleSubmit(e) {
-        e.preventDefault()
-        setError('')
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
 
-        try {
-            const response = await fetch('http://localhost:3000/api/users/login', {
-                method : 'POST',
-                headers : { 'Content-Type' : 'application/json' },
-                body : JSON.stringify({ email , password })
-            }) 
+    const result = await login(email, password);
 
-            const data = await response.json()
-
-            if (data.status !== 'success') {
-                setError(data.message)
-                return
-            }
-
-            login(data.data.user, data.token)
-            navigate('/dashboard')
-
-        }catch(err){
-            console.error(err)
-            setError('Something went wrong. Please try again.')
-        }
+    if (result.success) {
+      navigate('/dashboard');
+    } else {
+      setError(result.error);
     }
-    return(
+  };
+
+  return (
+    <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px' }}>
+      <h2>Login</h2>
+      <form onSubmit={handleSubmit}>
         <div>
-            <h1>Login</h1>
-            <form onSubmit = { handleSubmit }>
-                
-                <input
-                type = "email"
-                placeholder = "Email"
-                value = { email }
-                onChange = {(e) => setEmail(e.target.value)}
-                />
-               
-                <input
-                type = "password"
-                placeholder = "Password"
-                value = { password }
-                onChange = {(e) => setPassword(e.target.value)}
-                />
-
-                <button type = "submit">Log In</button>
-            
-            </form>
-            { error && <p>{error}</p>}
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{ width: '100%', padding: '8px', margin: '8px 0' }}
+          />
         </div>
-    )
-}
+        <div>
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ width: '100%', padding: '8px', margin: '8px 0' }}
+          />
+        </div>
+        <button type="submit" style={{ padding: '10px 20px' }}>
+          Login
+        </button>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+      </form>
+    </div>
+  );
+};
 
-export default Login
+export default Login;
