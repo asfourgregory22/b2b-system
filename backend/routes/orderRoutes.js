@@ -7,8 +7,8 @@ const { protect, restrictTo } = require("../middleware/authMiddleware");
 router.post('/', protect, restrictTo('admin', 'salesman', 'general_manager'), orderController.submitOrder);
 router.post('/mine', protect, restrictTo('admin' ,"customer"), orderController.submitOwnOrder);
 
-router.get('/mine', protect, restrictTo('admin' ,"customer"), orderController.getMyOwnOrders);
-router.get('/', protect, restrictTo('admin' , 'salesman'), orderController.getMyOrders);
+router.get('/mine', protect, restrictTo('customer'), orderController.getMyOwnOrders);
+router.get('/', protect, restrictTo('admin', 'salesman', 'general_manager', 'accountant', 'stock_manager'), orderController.getMyOrders);
 router.get('/:id', protect, orderController.getOrder);
 
 router.patch('/:id/approve', protect, restrictTo('admin', 'general_manager'), orderController.approveOrder);

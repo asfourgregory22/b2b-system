@@ -252,12 +252,11 @@ exports.getAllUsers = async (req, res) => {
     try {
         let filter = {};
 
-        if (req.user.role === 'salesman') {
-            filter = {
-                role: 'customer',
-                salesmanId: req.user._id,
-            };
-        }
+    if (req.user.role === 'salesman') {
+        filter = { role: 'customer', salesmanId: req.user._id };
+        } else if (req.user.role === 'stock_manager' || req.user.role === 'accountant') {
+            filter = { role: 'customer' };
+        }   
 
         const users = await User.find(filter);
 
@@ -295,6 +294,15 @@ exports.getUser = async (req, res) => {
                 });
             }
         }
+
+    if (req.user.role === 'stock_manager' || req.user.role === 'accountant') {
+    if (user.role !== 'customer') {
+        return res.status(403).json({
+            status: 'fail',
+            message: 'You do not have permission to view this user',
+        });
+    }
+}
 
         res.status(200).json({
             status: 'success',
