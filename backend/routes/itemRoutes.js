@@ -4,17 +4,15 @@ const router = express.Router();
 const itemController = require("../controllers/itemController");
 const { protect , restrictTo } = require("../middleware/authMiddleware");
 
-<<<<<<< HEAD
 router.get('/', protect, itemController.getAllItems);
 router.get('/:id', protect, itemController.getItem);
 
 router.post('/', protect, restrictTo('admin','stock_manager','general_manager'), itemController.createItem);
 
-=======
 router.post('/', protect, restrictTo('admin', 'stock_manager', 'general_manager'),itemController.createItem);
 router.get('/', protect, itemController.getAllItems);
 router.get('/:id', protect, itemController.getItem);
->>>>>>> temp-fix
+
 router.patch('/:id', protect, restrictTo('admin', 'stock_manager', 'general_manager'), itemController.updateItem);
 router.patch('/:id/deactivate', protect, restrictTo('admin', 'stock_manager', 'general_manager'), itemController.deactivateItem);
 router.patch('/:id/activate', protect, restrictTo('admin', 'stock_manager', 'general_manager'), itemController.activateItem);
